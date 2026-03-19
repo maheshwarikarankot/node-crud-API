@@ -1,6 +1,6 @@
-import { randomUUID }      from 'node:crypto';
-import type { FastifyInstance } from 'fastify';
-import { db }              from '../db/inmemorydb.js';
+import { randomUUID }                          from 'node:crypto';
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { db }                                  from '../db/inmemorydb.js';
 import type {
   Product,
   ProductParams,
@@ -9,8 +9,11 @@ import type {
   IPCMessage,
 } from '../types/Product.js';
 import {
-  CreateProductSchema,
-  UpdateProductSchema,
+  getAllProductsSchema,
+  getProductByIdSchema,
+  createProductSchema,
+  updateProductSchema,
+  deleteProductSchema,
 } from '../types/Product.js';
 
 // ── Validate uuid format ───────────────────────────────────────────
@@ -20,7 +23,7 @@ const isValidUUID = (id: string): boolean => {
   return uuidRegex.test(id);
 };
 
-// ── Send IPC message to primary in cluster mode ───────────────────
+// ── Send IPC message to primary in cluster mode ────────────────────
 const syncWithPrimary = (msg: IPCMessage): void => {
   if (process.send) process.send(msg);
 };
@@ -28,17 +31,27 @@ const syncWithPrimary = (msg: IPCMessage): void => {
 export default async function productRoutes(fastify: FastifyInstance): Promise<void> {
 
   // ── GET /api/products ────────────────────────────────────────────
-  // Returns all products — empty array if none exist
-  fastify.get('/', async (_request, reply) => {
-    return reply.code(200).send(db.products);
-  });
+  // Fastify schema validates response shape automatically
+  fastify.get(
+    '/',
+    getAllProductsSchema,
+    async (_request: FastifyRequest, reply: FastifyReply) => {
+      return reply.code(200).send(db.products);
+    }
+  );
 
   // ── GET /api/products/:productId ─────────────────────────────────
+  // Fastify schema validates params and response shape
   fastify.get<{ Params: ProductParams }>(
     '/:productId',
-    async (request, reply) => {
+    getProductByIdSchema,
+    async (
+      request: FastifyRequest<{ Params: ProductParams }>,
+      reply  : FastifyReply
+    ) => {
       const { productId } = request.params;
 
+      // uuid check — Fastify schema only validates type, not uuid format
       if (!isValidUUID(productId)) {
         return reply.code(400).send({
           message: 'Invalid productId — must be a valid uuid',
@@ -57,20 +70,15 @@ export default async function productRoutes(fastify: FastifyInstance): Promise<v
   );
 
   // ── POST /api/products ───────────────────────────────────────────
-  // Creates a new product — validates with Zod
+  // Fastify schema validates body automatically → returns 400 if invalid
   fastify.post<{ Body: CreateProductBody }>(
     '/',
-    async (request, reply) => {
-      // Zod validation
-      const result = CreateProductSchema.safeParse(request.body);
-
-      if (!result.success) {
-        return reply.code(400).send({
-          message: result.error.issues.map((e) => e.message).join(', '),
-        });
-      }
-
-      const { name, description, price, category, inStock } = result.data;
+    createProductSchema,
+    async (
+      request: FastifyRequest<{ Body: CreateProductBody }>,
+      reply  : FastifyReply
+    ) => {
+      const { name, description, price, category, inStock } = request.body;
 
       const newProduct: Product = {
         id: randomUUID(),
@@ -93,12 +101,17 @@ export default async function productRoutes(fastify: FastifyInstance): Promise<v
   );
 
   // ── PUT /api/products/:productId ─────────────────────────────────
-  // Updates an existing product — validates with Zod
+  // Fastify schema validates body fields automatically
   fastify.put<{ Params: ProductParams; Body: UpdateProductBody }>(
     '/:productId',
-    async (request, reply) => {
+    updateProductSchema,
+    async (
+      request: FastifyRequest<{ Params: ProductParams; Body: UpdateProductBody }>,
+      reply  : FastifyReply
+    ) => {
       const { productId } = request.params;
 
+      // uuid check
       if (!isValidUUID(productId)) {
         return reply.code(400).send({
           message: 'Invalid productId — must be a valid uuid',
@@ -114,25 +127,17 @@ export default async function productRoutes(fastify: FastifyInstance): Promise<v
         });
       }
 
-      // Zod validation on update body
-      const result = UpdateProductSchema.safeParse(request.body);
-      if (!result.success) {
-        return reply.code(400).send({
-          message: result.error.issues.map((e) => e.message).join(', '),
-        });
-      }
-
       const updatedProduct: Product = {
         ...db.products[productIndex],
-        ...result.data,
+        ...request.body,
       };
 
       // Cluster mode — notify primary
       if (process.send) {
         syncWithPrimary({
-          type: 'UPDATE_PRODUCT',
+          type     : 'UPDATE_PRODUCT',
           productId,
-          product: updatedProduct,
+          product  : updatedProduct,
         });
       } else {
         db.products[productIndex] = updatedProduct;
@@ -143,12 +148,17 @@ export default async function productRoutes(fastify: FastifyInstance): Promise<v
   );
 
   // ── DELETE /api/products/:productId ──────────────────────────────
-  // Deletes a product by id
+  // Fastify schema validates params automatically
   fastify.delete<{ Params: ProductParams }>(
     '/:productId',
-    async (request, reply) => {
+    deleteProductSchema,
+    async (
+      request: FastifyRequest<{ Params: ProductParams }>,
+      reply  : FastifyReply
+    ) => {
       const { productId } = request.params;
 
+      // uuid check
       if (!isValidUUID(productId)) {
         return reply.code(400).send({
           message: 'Invalid productId — must be a valid uuid',

@@ -1,35 +1,171 @@
-import { z } from 'zod';
-
-// ── Zod schemas ────────────────────────────────────────────────────
-export const CreateProductSchema = z.object({
-  name       : z.string().min(1,   { message: 'name is required' }),
-  description: z.string().min(1,   { message: 'description is required' }),
-  price      : z.number().positive({ message: 'price must be a positive number' }),
-  category   : z.string().min(1,   { message: 'category is required' }),
-  inStock    : z.boolean({ message: 'inStock is required' }),
-});
-
-export const UpdateProductSchema = z.object({
-  name       : z.string().min(1).optional(),
-  description: z.string().min(1).optional(),
-  price      : z.number().positive({ message: 'price must be a positive number' }).optional(),
-  category   : z.string().min(1).optional(),
-  inStock    : z.boolean().optional(),
-});
-
-// ── Types inferred from Zod schemas ───────────────────────────────
-export type CreateProductBody = z.infer<typeof CreateProductSchema>;
-export type UpdateProductBody = z.infer<typeof UpdateProductSchema>;
-
-// ── Full Product interface ─────────────────────────────────────────
-export interface Product extends CreateProductBody {
-  id: string;
+// ── TypeScript interfaces ──────────────────────────────────────────
+export interface Product {
+  id         : string;
+  name       : string;
+  description: string;
+  price      : number;
+  category   : string;
+  inStock    : boolean;
 }
 
-// ── Route params ───────────────────────────────────────────────────
+export interface CreateProductBody {
+  name       : string;
+  description: string;
+  price      : number;
+  category   : string;
+  inStock    : boolean;
+}
+
+export interface UpdateProductBody {
+  name?       : string;
+  description?: string;
+  price?      : number;
+  category?   : string;
+  inStock?    : boolean;
+}
+
 export interface ProductParams {
   productId: string;
 }
+
+// ── Fastify JSON Schema — POST /api/products ───────────────────────
+// Fastify uses this to validate request body automatically
+// If validation fails → Fastify returns 400 automatically
+export const createProductSchema = {
+  schema: {
+    body: {
+      type      : 'object',
+      required  : ['name', 'description', 'price', 'category', 'inStock'],
+      properties: {
+        name       : { type: 'string',  minLength: 1                          },
+        description: { type: 'string',  minLength: 1                          },
+        price      : { type: 'number',  exclusiveMinimum: 0                   },
+        category   : { type: 'string',  minLength: 1                          },
+        inStock    : { type: 'boolean'                                         },
+      },
+      additionalProperties: false,
+    },
+    response: {
+      201: {
+        type      : 'object',
+        properties: {
+          id         : { type: 'string'  },
+          name       : { type: 'string'  },
+          description: { type: 'string'  },
+          price      : { type: 'number'  },
+          category   : { type: 'string'  },
+          inStock    : { type: 'boolean' },
+        },
+      },
+    },
+  },
+};
+
+// ── Fastify JSON Schema — PUT /api/products/:productId ────────────
+// All fields are optional for update
+export const updateProductSchema = {
+  schema: {
+    params: {
+      type      : 'object',
+      required  : ['productId'],
+      properties: {
+        productId: { type: 'string' },
+      },
+    },
+    body: {
+      type      : 'object',
+      properties: {
+        name       : { type: 'string',  minLength: 1       },
+        description: { type: 'string',  minLength: 1       },
+        price      : { type: 'number',  exclusiveMinimum: 0 },
+        category   : { type: 'string',  minLength: 1       },
+        inStock    : { type: 'boolean'                      },
+      },
+      additionalProperties: false,
+      minProperties       : 1,   // at least one field required for update
+    },
+    response: {
+      200: {
+        type      : 'object',
+        properties: {
+          id         : { type: 'string'  },
+          name       : { type: 'string'  },
+          description: { type: 'string'  },
+          price      : { type: 'number'  },
+          category   : { type: 'string'  },
+          inStock    : { type: 'boolean' },
+        },
+      },
+    },
+  },
+};
+
+// ── Fastify JSON Schema — GET /api/products ───────────────────────
+export const getAllProductsSchema = {
+  schema: {
+    response: {
+      200: {
+        type : 'array',
+        items: {
+          type      : 'object',
+          properties: {
+            id         : { type: 'string'  },
+            name       : { type: 'string'  },
+            description: { type: 'string'  },
+            price      : { type: 'number'  },
+            category   : { type: 'string'  },
+            inStock    : { type: 'boolean' },
+          },
+        },
+      },
+    },
+  },
+};
+
+// ── Fastify JSON Schema — GET /api/products/:productId ────────────
+export const getProductByIdSchema = {
+  schema: {
+    params: {
+      type      : 'object',
+      required  : ['productId'],
+      properties: {
+        productId: { type: 'string' },
+      },
+    },
+    response: {
+      200: {
+        type      : 'object',
+        properties: {
+          id         : { type: 'string'  },
+          name       : { type: 'string'  },
+          description: { type: 'string'  },
+          price      : { type: 'number'  },
+          category   : { type: 'string'  },
+          inStock    : { type: 'boolean' },
+        },
+      },
+    },
+  },
+};
+
+// ── Fastify JSON Schema — DELETE /api/products/:productId ─────────
+export const deleteProductSchema = {
+  schema: {
+    params: {
+      type      : 'object',
+      required  : ['productId'],
+      properties: {
+        productId: { type: 'string' },
+      },
+    },
+    response: {
+      204: {
+        type      : 'null',
+        description: 'Product deleted successfully',
+      },
+    },
+  },
+};
 
 // ── IPC message types for cluster ─────────────────────────────────
 export type IPCMessage =
