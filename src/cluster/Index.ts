@@ -118,7 +118,7 @@ if (cluster.isPrimary) {
   // ── Worker process — start the Fastify app ─────────────────────
 
   const WORKER_PORT = parseInt(process.env.PORT ?? '4001');
-  const app         = buildApp();
+  const app         = await buildApp();
 
   // Receive state sync messages from primary
   process.on('message', (msg: IPCMessage) => {

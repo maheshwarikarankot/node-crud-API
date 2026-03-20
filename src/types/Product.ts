@@ -33,28 +33,32 @@ export interface ProductParams {
 // If validation fails → Fastify returns 400 automatically
 export const createProductSchema = {
   schema: {
+    tags: ['Products'],
+    summary: 'Create a new product',
+    description: 'Create a new product with the provided details',
     body: {
       type      : 'object',
       required  : ['name', 'description', 'price', 'category', 'inStock'],
       properties: {
-        name       : { type: 'string',  minLength: 1                          },
-        description: { type: 'string',  minLength: 1                          },
-        price      : { type: 'number',  exclusiveMinimum: 0                   },
-        category   : { type: 'string',  minLength: 1                          },
-        inStock    : { type: 'boolean'                                         },
+        name       : { type: 'string',  minLength: 1, description: 'Product name'                },
+        description: { type: 'string',  minLength: 1, description: 'Product description'         },
+        price      : { type: 'number',  exclusiveMinimum: 0, description: 'Product price'        },
+        category   : { type: 'string',  minLength: 1, description: 'Product category'            },
+        inStock    : { type: 'boolean', description: 'Product availability status'              },
       },
       additionalProperties: false,
     },
     response: {
       201: {
         type      : 'object',
+        description: 'Product created successfully',
         properties: {
-          id         : { type: 'string'  },
-          name       : { type: 'string'  },
-          description: { type: 'string'  },
-          price      : { type: 'number'  },
-          category   : { type: 'string'  },
-          inStock    : { type: 'boolean' },
+          id         : { type: 'string', description: 'Unique product ID' },
+          name       : { type: 'string', description: 'Product name' },
+          description: { type: 'string', description: 'Product description' },
+          price      : { type: 'number', description: 'Product price' },
+          category   : { type: 'string', description: 'Product category' },
+          inStock    : { type: 'boolean', description: 'Product availability' },
         },
       },
     },
@@ -65,21 +69,24 @@ export const createProductSchema = {
 // All fields are optional for update
 export const updateProductSchema = {
   schema: {
+    tags: ['Products'],
+    summary: 'Update a product',
+    description: 'Update an existing product with the provided details',
     params: {
       type      : 'object',
       required  : ['productId'],
       properties: {
-        productId: { type: 'string' },
+        productId: { type: 'string', description: 'The product ID (UUID)' },
       },
     },
     body: {
       type      : 'object',
       properties: {
-        name       : { type: 'string',  minLength: 1       },
-        description: { type: 'string',  minLength: 1       },
-        price      : { type: 'number',  exclusiveMinimum: 0 },
-        category   : { type: 'string',  minLength: 1       },
-        inStock    : { type: 'boolean'                      },
+        name       : { type: 'string',  minLength: 1, description: 'Product name'                },
+        description: { type: 'string',  minLength: 1, description: 'Product description'         },
+        price      : { type: 'number',  exclusiveMinimum: 0, description: 'Product price'        },
+        category   : { type: 'string',  minLength: 1, description: 'Product category'            },
+        inStock    : { type: 'boolean', description: 'Product availability status'              },
       },
       additionalProperties: false,
       minProperties       : 1,   // at least one field required for update
@@ -87,13 +94,14 @@ export const updateProductSchema = {
     response: {
       200: {
         type      : 'object',
+        description: 'Product updated successfully',
         properties: {
-          id         : { type: 'string'  },
-          name       : { type: 'string'  },
-          description: { type: 'string'  },
-          price      : { type: 'number'  },
-          category   : { type: 'string'  },
-          inStock    : { type: 'boolean' },
+          id         : { type: 'string', description: 'Unique product ID' },
+          name       : { type: 'string', description: 'Product name' },
+          description: { type: 'string', description: 'Product description' },
+          price      : { type: 'number', description: 'Product price' },
+          category   : { type: 'string', description: 'Product category' },
+          inStock    : { type: 'boolean', description: 'Product availability' },
         },
       },
     },
@@ -103,18 +111,22 @@ export const updateProductSchema = {
 // ── Fastify JSON Schema — GET /api/products ───────────────────────
 export const getAllProductsSchema = {
   schema: {
+    tags: ['Products'],
+    summary: 'Get all products',
+    description: 'Retrieve a list of all products in the catalog',
     response: {
       200: {
         type : 'array',
+        description: 'List of products',
         items: {
           type      : 'object',
           properties: {
-            id         : { type: 'string'  },
-            name       : { type: 'string'  },
-            description: { type: 'string'  },
-            price      : { type: 'number'  },
-            category   : { type: 'string'  },
-            inStock    : { type: 'boolean' },
+            id         : { type: 'string', description: 'Unique product ID' },
+            name       : { type: 'string', description: 'Product name' },
+            description: { type: 'string', description: 'Product description' },
+            price      : { type: 'number', description: 'Product price' },
+            category   : { type: 'string', description: 'Product category' },
+            inStock    : { type: 'boolean', description: 'Product availability' },
           },
         },
       },
@@ -125,23 +137,27 @@ export const getAllProductsSchema = {
 // ── Fastify JSON Schema — GET /api/products/:productId ────────────
 export const getProductByIdSchema = {
   schema: {
+    tags: ['Products'],
+    summary: 'Get a product by ID',
+    description: 'Retrieve a specific product using its UUID',
     params: {
       type      : 'object',
       required  : ['productId'],
       properties: {
-        productId: { type: 'string' },
+        productId: { type: 'string', description: 'The product ID (UUID)' },
       },
     },
     response: {
       200: {
         type      : 'object',
+        description: 'Product found',
         properties: {
-          id         : { type: 'string'  },
-          name       : { type: 'string'  },
-          description: { type: 'string'  },
-          price      : { type: 'number'  },
-          category   : { type: 'string'  },
-          inStock    : { type: 'boolean' },
+          id         : { type: 'string', description: 'Unique product ID' },
+          name       : { type: 'string', description: 'Product name' },
+          description: { type: 'string', description: 'Product description' },
+          price      : { type: 'number', description: 'Product price' },
+          category   : { type: 'string', description: 'Product category' },
+          inStock    : { type: 'boolean', description: 'Product availability' },
         },
       },
     },
@@ -151,17 +167,23 @@ export const getProductByIdSchema = {
 // ── Fastify JSON Schema — DELETE /api/products/:productId ─────────
 export const deleteProductSchema = {
   schema: {
+    tags: ['Products'],
+    summary: 'Delete a product',
+    description: 'Delete a specific product by its UUID',
     params: {
       type      : 'object',
       required  : ['productId'],
       properties: {
-        productId: { type: 'string' },
+        productId: { type: 'string', description: 'The product ID (UUID)' },
       },
     },
     response: {
-      204: {
-        type      : 'null',
+      200: {
+        type      : 'object',
         description: 'Product deleted successfully',
+        properties: {
+          message: { type: 'string', description: 'Success message' },
+        },
       },
     },
   },
