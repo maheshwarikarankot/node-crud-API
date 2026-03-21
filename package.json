@@ -8,7 +8,7 @@
     "start:dev": "tsx watch src/server.ts",
     "start:prod": "tsc && node dist/server.js",
     "start:multi": "tsx src/cluster/index.ts",
-    "test": "tsx --test tests/products.test.ts",
+    "test": "tsx --test src/Test/ProductTest.ts",
     "build": "tsc"
   },
   "repository": {

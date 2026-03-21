@@ -7,14 +7,14 @@ import type {
   CreateProductBody,
   UpdateProductBody,
   IPCMessage,
-} from '../types/Product.js';
+} from '../types/ProductType.js';
 import {
   getAllProductsSchema,
   getProductByIdSchema,
   createProductSchema,
   updateProductSchema,
   deleteProductSchema,
-} from '../types/Product.js';
+} from '../types/ProductType.js';
 
 // ── Validate uuid format ───────────────────────────────────────────
 const isValidUUID = (id: string): boolean => {

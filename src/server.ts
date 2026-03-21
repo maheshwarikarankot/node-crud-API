@@ -2,7 +2,7 @@ import 'dotenv/config';
 import Fastify,{ type FastifyInstance } from 'fastify';
 import productRoutes                from './routes/Products.js';
 import { db }                       from './db/inmemorydb.js';
-import type { IPCMessage }               from './types/Product.js';
+import type { IPCMessage }               from './types/ProductType.js';
 
 // ── Build and configure Fastify app ───────────────────────────────
 export const buildApp = async (): Promise<FastifyInstance> => {
@@ -43,8 +43,16 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   });
 
   // ── Handle 500 — server side errors ─────────────────────────────
-  fastify.setErrorHandler((error, _request, reply) => {
+  fastify.setErrorHandler((error: any, _request, reply) => {
     fastify.log.error(error);
+    
+    // If error already has a statusCode (like validation errors), use it
+    if (error.statusCode && error.statusCode < 500) {
+      return reply.code(error.statusCode).send({
+        message: error.message || 'Request validation failed',
+      });
+    }
+    
     reply.code(500).send({
       message: 'Internal server error — something went wrong on the server',
     });

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import cluster       from 'node:cluster';
 import os            from 'node:os';
 import http          from 'node:http';
-import type { IPCMessage, Product } from '../types/Product.js';
+import type { IPCMessage, Product } from '../types/ProductType.js';
 import { buildApp }  from '../server.js';
 import { db }        from '../db/inmemorydb.js'; 
 
