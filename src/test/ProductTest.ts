@@ -17,7 +17,7 @@ after(async () => {
 
 // ── Shared test product ────────────────────────────────────────────
 const validProduct = {
-  name       : 'Test Laptop',
+  name       : 'Laptop',
   description: 'A powerful test laptop',
   price      : 999,
   category   : 'electronics',
