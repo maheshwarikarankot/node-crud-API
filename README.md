@@ -243,7 +243,7 @@ node-crud-API/
 ├── src/
 │   ├── server.ts              # Main Fastify app builder
 │   ├── cluster/
-│   │   └── index.ts           # Multi-process &orchestration
+│   │   └── index.ts           # Multi-process orchestration
 │   ├── routes/
 │   │   └── Products.ts        # CRUD endpoint handlers
 │   ├── db/
@@ -256,6 +256,7 @@ node-crud-API/
 ├── package.json               # Dependencies and scripts
 ├── tsconfig.json              # TypeScript configuration
 └── README.md                  # This file
+
 
 
 
