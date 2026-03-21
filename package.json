@@ -1,0 +1,41 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "Simple CRUD API for a Product Catalog using Fastify and TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec node dist/server.js",
+    "start:dev": "tsx watch src/server.ts",
+    "start:prod": "tsc && node dist/server.js",
+    "start:multi": "tsx src/cluster/index.ts",
+    "test": "tsx --test src/Test/ProductTest.ts",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maheshwarikarankot/node-crud-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/maheshwarikarankot/node-crud-API/issues"
+  },
+  "homepage": "https://github.com/maheshwarikarankot/node-crud-API#readme",
+  "dependencies": {
+    "@fastify/swagger": "^9.7.0",
+    "@fastify/swagger-ui": "^5.2.5",
+    "dotenv": "^17.3.1",
+    "fastify": "^5.8.2",
+    "fastify-plugin": "^5.1.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
