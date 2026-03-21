@@ -1,43 +1,45 @@
-Product Catalog CRUD API:
+# Product Catalog CRUD API:
 
-A high-performance CRUD API for managing products, built with Fastify,TypeScript, and Node.js. Features multi-process clustering, in-memory database, comprehensive API documentation, and full test coverage.
-
-Features:
-
-CRUD Operations - Create, Read, Update, Delete products  
-Fastify Framework - Modern, fast HTTP server (v5.8.2)  
-TypeScript - Type-safe codebase with strict mode enabled  
-Cluster Mode - Multi-process architecture with load balancing  
-API Documentation - Interactive Swagger UI at `/docs`  
-Input Validation - JSON Schema validation with Zod  
-Comprehensive Tests - 18 test cases covering all scenarios  
-Error Handling - Proper HTTP status codes and error messages  
-IPC Communication - State synchronization across worker processes  
+A high-performance CRUD API for managing products, built with **Fastify**, **TypeScript**, and **Node.js**. Features multi-process clustering, in-memory database, comprehensive API documentation, and full test coverage.
 
 
-Prerequisites
+## Features:
 
-Node.js v25.2.1 or higher
-npm v10.x or higher
+- ✅ **CRUD Operations** - Create, Read, Update, Delete products  
+- ✅ **Fastify Framework** - Modern, fast HTTP server (v5.8.2)  
+- ✅ **TypeScript** - Type-safe codebase with strict mode enabled  
+- ✅ **Cluster Mode** - Multi-process architecture with load balancing  
+- ✅ **API Documentation** - Interactive Swagger UI at `/docs`  
+- ✅ **Input Validation** - JSON Schema validation with Zod  
+- ✅ **Comprehensive Tests** - 18 test cases covering all scenarios  
+- ✅ **Error Handling** - Proper HTTP status codes and error messages  
+- ✅ **IPC Communication** - State synchronization across worker processes  
+
+
+## Prerequisites:
+
+- **Node.js** v25.2.1 or higher
+- **npm** v10.x or higher
 
 Check your versions:
-
+```bash
 node --version
 npm --version
+```
 
 
-Installation:
+## Installation:
 
-1. Clone the Repository:
-
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/maheshwarikarankot/node-crud-API.git
 cd node-crud-API
+```
 
-
-2. Install Dependencies:
-
+### 2️⃣ Install Dependencies
+```bash
 npm install
-
+```
 
 This installs:
 - Fastify framework
@@ -45,73 +47,79 @@ This installs:
 - TypeScript compiler
 - Development tools (tsx, nodemon)
 
-3. Verify Installation:
-
+### 3️⃣ Verify Installation
+```bash
 npm run build
-
+```
 
 If successful, you'll see no errors and a `dist/` folder will be created.
 
-Running the Application:
 
-1: Development Mode:
+## Running the Application:
 
+### 1️⃣ Development Mode (Recommended)
+Hot-reload enabled with file watching:
+```bash
 npm run start:dev
-
+```
 - Server runs at `http://localhost:4000`
 - API: `http://localhost:4000/api/products`
 - Swagger UI: `http://localhost:4000/docs`
+- Auto-restarts on file changes
 
-
-Mode 2: Production Mode
-
+### 2️⃣ Production Mode
+Optimized build with compilation:
+```bash
 npm run start:prod
-
+```
 - Compiles TypeScript to JavaScript
 - Server runs at `http://localhost:4000`
 - Use this for deployment
 
-Mode 3: Cluster Mode (Multi-Process)
-
+### 3️⃣ Cluster Mode (Multi-Process)
+Utilizes all CPU cores with load balancing:
+```bash
 npm run start:multi
-
+```
 - Primary process on port 4000 (load balancer)
 - Worker processes on ports 4001, 4002, etc. (one per CPU core)
 - State synchronized across all workers via IPC
 - Perfect for high-traffic scenarios
 
 
-Testing:
+## Testing:
 
+### Run All Tests
+```bash
 npm test
+```
+
+### Expected Output
+```
+✅ 18 tests
+✅ 0 failed
+✅ 100% pass rate
+```
+
+### Test Coverage:
+- **GET /api/products** - List all products
+- **POST /api/products** - Create new product
+- **GET /api/products/:id** - Get single product
+- **PUT /api/products/:id** - Update product
+- **DELETE /api/products/:id** - Delete product
+- **Validation** - Missing fields, invalid prices, type errors
+- **Error Handling** - Invalid UUIDs, non-existent products
 
 
-Output:
+## API Endpoints:
 
-- 18 tests
-- 0 failed
-- 100% pass rate
-
-
-Test Coverage:
-- GET /api/products** - List all products
-- POST /api/products** - Create new product
-- GET /api/products/:id** - Get single product
-- PUT /api/products/:id** - Update product
-- DELETE /api/products/:id** - Delete product
-- Validation** - Missing fields, invalid prices, type errors
-- Error Handling** - Invalid UUIDs, non-existent products
-
----
-
-API Endpoints:
-
-1. Get All Products:
-
+### 1️⃣ Get All Products
+```bash
 curl -X GET http://localhost:4000/api/products
+```
 
-Response:
-
+**Response:**
+```json
 [
   {
     "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -122,10 +130,11 @@ Response:
     "inStock": true
   }
 ]
+```
 
 
-2. Create a Product:
-
+### 2️⃣ Create a Product
+```bash
 curl -X POST http://localhost:4000/api/products \
   -H "Content-Type: application/json" \
   -d '{
@@ -135,10 +144,10 @@ curl -X POST http://localhost:4000/api/products \
     "category": "accessories",
     "inStock": true
   }'
+```
 
-
-Response: (201 Created):
-
+**Response:** (201 Created)
+```json
 {
   "id": "c6e5cd1f-2033-4c26-8df3-fbd8876acf08",
   "name": "Wireless Mouse",
@@ -147,15 +156,16 @@ Response: (201 Created):
   "category": "accessories",
   "inStock": true
 }
+```
 
 
-3. Get Single Product:
-
+### 3️⃣ Get Single Product
+```bash
 curl -X GET http://localhost:4000/api/products/c6e5cd1f-2033-4c26-8df3-fbd8876acf08
+```
 
-
-Response: (200 OK):
-
+**Response:** (200 OK)
+```json
 {
   "id": "c6e5cd1f-2033-4c26-8df3-fbd8876acf08",
   "name": "Wireless Mouse",
@@ -164,20 +174,21 @@ Response: (200 OK):
   "category": "accessories",
   "inStock": true
 }
+```
 
 
-4. Update a Product:
-
+### 4️⃣ Update a Product
+```bash
 curl -X PUT http://localhost:4000/api/products/c6e5cd1f-2033-4c26-8df3-fbd8876acf08 \
   -H "Content-Type: application/json" \
   -d '{
     "price": 24.99,
     "inStock": false
   }'
+```
 
-
-Response: (200 OK):
-
+**Response:** (200 OK)
+```json
 {
   "id": "c6e5cd1f-2033-4c26-8df3-fbd8876acf08",
   "name": "Wireless Mouse",
@@ -186,18 +197,22 @@ Response: (200 OK):
   "category": "accessories",
   "inStock": false
 }
+```
 
-5. Delete a Product:
 
+### 5️⃣ Delete a Product
+```bash
 curl -X DELETE http://localhost:4000/api/products/c6e5cd1f-2033-4c26-8df3-fbd8876acf08
+```
 
+**Response:** (204 No Content)
+```
+[Empty body]
+```
 
-Response: (204 No Content)
-[]
+## API Documentation:
 
-API Documentation:
-
-Interactive Swagger UI:
+### Interactive Swagger UI
 Visit `http://localhost:4000/docs` in your browser to:
 - View all endpoints with descriptions
 - See request/response schemas
@@ -205,40 +220,51 @@ Visit `http://localhost:4000/docs` in your browser to:
 - Export API spec as OpenAPI/Swagger file
 
 
-Input Validation:
+## Input Validation
 
 All requests are validated using JSON Schema. Invalid requests return `400 Bad Request`:
 
-Required Fields for POST/PUT:
+### Required Fields for POST/PUT
 - `name` - string, min 1 character
 - `description` - string, min 1 character
 - `price` - number, must be > 0
 - `category` - string, min 1 character
 - `inStock` - boolean
 
-Validation Examples:
+### Validation Examples
 
-Missing required field:
+**Missing required field:**
+```bash
 curl -X POST http://localhost:4000/api/products \
   -H "Content-Type: application/json" \
   -d '{"name": "Product"}' 
-  Returns 400
+# Returns 400
+```
 
-Invalid price (zero not allowed):
+**Invalid price (zero not allowed):**
+```bash
 curl -X POST http://localhost:4000/api/products \
   -H "Content-Type: application/json" \
   -d '{"name": "Product", "price": 0}' 
-  Returns 400
+# Returns 400
+```
 
-Invalid UUID:
-curl -X GET http://localhost:4000/api/products/invalid-id Returns 400
+**Invalid UUID:**
+```bash
+curl -X GET http://localhost:4000/api/products/invalid-id
+# Returns 400
+```
 
-Non-existent product:
-curl -X GET http://localhost:4000/api/products/00000000-0000-4000-8000-000000000000 
-Returns 404
+**Non-existent product:**
+```bash
+curl -X GET http://localhost:4000/api/products/00000000-0000-4000-8000-000000000000
+# Returns 404
+```
 
-Project Structure:
 
+## Project Structure:
+
+```
 node-crud-API/
 ├── src/
 │   ├── server.ts              # Main Fastify app builder
@@ -256,6 +282,18 @@ node-crud-API/
 ├── package.json               # Dependencies and scripts
 ├── tsconfig.json              # TypeScript configuration
 └── README.md                  # This file
+```
+
+
+## Configuration:
+
+### Environment Variables
+Create a `.env` file (optional):
+```bash
+PORT=2000  # Server port
+```
+
+
 
 
 
